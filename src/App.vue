@@ -9,9 +9,13 @@
   //import Exemplo08 from './componentes/Exemplo08Teclado.vue';
   //import Exemplo09 from './componentes/Exemplo09Enviar.vue';
   //import Exemplo10 from './componentes/Exemplo10Lifecycle.vue';
-  import Exemplo11 from './componentes/Exemplo11Props1.vue';
+  //import Exemplo11 from './componentes/Exemplo11Props1.vue';
+  //import Exemplo12 from './componentes/Exemplo12Rotas.vue';
+  //import Exemplo13 from './componentes/Exemplo13Requisicao.vue';
+  //import Exemplo14 from './componentes/Exemplo14Bootstrap.vue';
+  import Exemplo15 from './componentes/Exemplo15API.vue';
 </script>
 
 <template>
-  <Exemplo11></Exemplo11>
+  <Exemplo15></Exemplo15>
 </template>
