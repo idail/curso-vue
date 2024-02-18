@@ -14,30 +14,70 @@ onMounted(function () {
 
 let obj = ref({ "id": 0, "produto": "", "valor": 0 });
 
-function cadastrar(event)
-{
-    fetch("http://localhost:3000/produtos",{
-        method:"POST",
-        body:JSON.stringify(obj.value),
-        headers:{"Content-Type":"application/json"}
+function cadastrar(event) {
+    fetch("http://localhost:3000/produtos", {
+        method: "POST",
+        body: JSON.stringify(obj.value),
+        headers: { "Content-Type": "application/json" }
     }).then(requisicao => requisicao.json()).then(retorno => {
         produtos.value.push(retorno)
 
         obj.value.produto = "";
-        obj.value.valor = "";
+        obj.value.valor = 0;
     })
 
     event.preventDefault();
 }
 
-function selecionar(indice){
+function selecionar(indice) {
     obj.value = {
-        id:produtos.value[indice].id,
-        produto:produtos.value[indice].produto,
-        valor:produtos.value[indice].valor
+        id: produtos.value[indice].id,
+        produto: produtos.value[indice].produto,
+        valor: produtos.value[indice].valor
     }
 
     btnCadastrar.value = false;
+}
+
+function editar() {
+    fetch("http://localhost:3000/produtos/" + obj.value.id, {
+        method: "put",
+        body: JSON.stringify(obj.value),
+        headers: { "Content-Type": "application/json" }
+    }).then(requisicao => requisicao.json()).then(retorno => {
+
+        let indiceProduto = produtos.value.findIndex(objP => {
+            return objP.id === retorno.id;
+        });
+
+        produtos.value[indiceProduto] = retorno;
+
+        btnCadastrar.value = true;
+
+        obj.value.id = 0;
+        obj.value.produto = "";
+        obj.value.valor = 0;
+    })
+}
+
+function remover() {
+    fetch("http://localhost:3000/produtos/" + obj.value.id, {
+        method: "delete",
+        headers: { "Content-Type": "application/json" }
+    }).then(requisicao => requisicao.json()).then(function () {
+
+        let indiceProduto = produtos.value.findIndex(objP => {
+            return objP.id === obj.value.id;
+        });
+
+        produtos.value.splice(indiceProduto,1);
+
+        btnCadastrar.value = true;
+
+        obj.value.id = 0;
+        obj.value.produto = "";
+        obj.value.valor = 0;
+    })
 }
 </script>
 
@@ -52,7 +92,7 @@ input {
     margin-bottom: 10px;
 }
 
-.espacamentoBtn{
+.espacamentoBtn {
     margin-left: 5px;
     margin-right: 5px;
 }
@@ -64,8 +104,8 @@ input {
         <input type="text" class="form-control" name="" id="" placeholder="Produto" v-model="obj.produto">
         <input type="number" class="form-control" name="" id="" placeholder="Valor" v-model="obj.valor">
         <input type="submit" v-if="btnCadastrar" class="btn btn-primary" name="" id="" value="Cadastrar">
-        <input type="button" v-if="!btnCadastrar" value="Editar" class="btn btn-primary espacamentoBtn">
-        <input type="button" v-if="!btnCadastrar" value="Remover" class="btn btn-primary">
+        <input type="button" v-if="!btnCadastrar" @click="editar" value="Editar" class="btn btn-primary espacamentoBtn">
+        <input type="button" v-if="!btnCadastrar" @click="remover" value="Remover" class="btn btn-primary">
     </form>
 
     <table class="table table-striped">
@@ -77,7 +117,7 @@ input {
             </tr>
         </thead>
         <tbody>
-            <tr v-for="(p,indice) in produtos">
+            <tr v-for="(p, indice) in produtos">
                 <td>{{ p.produto }}</td>
                 <td>{{ p.valor }}</td>
                 <td><button @click="selecionar(indice)" class="btn btn-primary">Selecionar</button></td>
